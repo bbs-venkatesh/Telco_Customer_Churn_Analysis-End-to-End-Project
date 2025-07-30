@@ -60,6 +60,7 @@ SQL queries were executed to derive foundational metrics:
 - **Demographic Churn:** Analyzed churn rates across gender, senior citizen status, and partner status.
 
   ```sql
+  
   -- 1. Overall Churn & Demographic Profile
 
 -- What is the total number of customers and the overall churn rate?
@@ -126,7 +127,7 @@ SELECT
     END) / COUNT(*)) * 100 AS Partner_Churn
 FROM
     churn_data;
-```
+
 
 - **Tenure-Based Churn:** Determined average tenure for churned vs. non-churned customers and churn rates across different tenure_bins.
 ```sql

@@ -8,8 +8,8 @@ The telecom company is experiencing customer attrition, leading to lost revenue 
 
 ## Project Objectives:
 
-  ### Descriptive Analysis: Understand the current churn rate and profile of churned customers based on demographics, service usage, and billing information.
+  - **Descriptive Analysis:** Understand the current churn rate and profile of churned customers based on demographics, service usage, and billing information.
 
-  ### Diagnostic Analysis: Identify the underlying factors and relationships that contribute to customer churn.
+  ### Diagnostic Analysis:** Identify the underlying factors and relationships that contribute to customer churn.
 
-  ### Prescriptive Analysis: Develop data-backed, actionable recommendations to mitigate churn and enhance customer retention strategies.
+  ### Prescriptive Analysis:** Develop data-backed, actionable recommendations to mitigate churn and enhance customer retention strategies.

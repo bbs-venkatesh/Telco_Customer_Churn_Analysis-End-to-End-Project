@@ -59,11 +59,268 @@ SQL queries were executed to derive foundational metrics:
 
 - **Demographic Churn:** Analyzed churn rates across gender, senior citizen status, and partner status.
 
+  ```sql
+  -- 1. Overall Churn & Demographic Profile
+
+-- What is the total number of customers and the overall churn rate?
+SELECT 
+    COUNT(*) AS Total_Customers,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS churned_customers,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) * 1.0 / COUNT(*)) * 100 AS churn_rate
+FROM
+    churn_data;
+    
+
+-- How does the churn rate differ between male and female customers?
+SELECT 
+    gender,
+    COUNT(*) AS Total_Gender_Count,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) * 1 AS Gender,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) * 1 / COUNT(*) * 100) AS GenderChurnRate
+FROM
+    churn_data
+GROUP BY gender;
+
+
+-- What is the churn rate for senior citizens compared to non-senior citizens?
+SELECT 
+    COUNT(*) AS Total_Customers,
+    SUM(CASE
+        WHEN SeniorCitizen = 1 THEN 1
+        ELSE 0
+    END) AS SenoirCitizenCount,
+    (SUM(CASE
+        WHEN SeniorCitizen = 1 THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS SenoirCitizenChurnRate
+FROM
+    churn_data;
+
+
+-- What is the churn rate for customers who are married versus those who are not?
+SELECT 
+    COUNT(*) AS Total_Customers,
+    SUM(CASE
+        WHEN Partner = 'Yes' THEN 1
+        ELSE 0
+    END) AS Married,
+    (SUM(CASE
+        WHEN Partner = 'Yes' THEN 1
+        ELSE 0
+    END) * 1 / COUNT(*)) * 100 AS Married_Rate,
+    (SUM(CASE
+        WHEN (Partner = 'Yes' AND Churn = 'Yes') THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS Partner_Churn
+FROM
+    churn_data;
+  ```
+
 - **Tenure-Based Churn:** Determined average tenure for churned vs. non-churned customers and churn rates across different tenure_bins.
+```sql
+-- 2. Customer Tenure & Churn
+
+-- What is the average tenure for customers who have churned? What about for those who have not?
+SELECT 
+    Churn, COUNT(*) AS Churn_Count, AVG(tenure) AS AvgTenure
+FROM
+    churn_data
+GROUP BY Churn;
+
+
+-- How many customers are there in each of the tenure groups you created (e.g., 0-12 months, 13-24 months, etc.)?
+SELECT 
+    tenure_bins, COUNT(*) AS Customers_Count
+FROM
+    churn_data
+GROUP BY tenure_bins;
+
+
+-- What is the churn rate for each of these tenure groups?
+SELECT 
+    tenure_bins,
+    COUNT(*) AS Customers_Count,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS Churn_Count,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY tenure_bins
+ORDER BY ChurnRate DESC;
+```
 
 - **Service Usage Churn:** Explored churn rates based on phone service, internet service type (DSL, Fiber Optic), and tech support.
 
+```sql
+-- 3. Service Usage & Dependencies
+
+-- What is the churn rate for customers who have phone service versus those who do not?
+SELECT 
+    PhoneService,
+    COUNT(*) AS CustomerCount,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY PhoneService;
+
+
+-- For customers with internet service, how does the churn rate vary by InternetService type (DSL, Fiber Optic, No Internet)?
+SELECT 
+    TechSupport,
+    COUNT(*) AS customerCount,
+    SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY TechSupport;
+
+
+-- Among customers with multiple lines, is the churn rate higher or lower compared to customers with a single line?
+SELECT 
+    MultipleLines,
+    COUNT(*) AS customerCount,
+    SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY MultipleLines;
+
+
+-- What is the churn rate for customers who have tech support versus those who do not?
+SELECT 
+    MultipleLines,
+    COUNT(*) AS customerCount,
+    SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY MultipleLines;
+
+
+-- How many customers have a Partner and what is their churn rate? How does this compare to customers who do not have a partner?
+SELECT 
+    Partner,
+    COUNT(*) AS customerCount,
+    SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY Partner;
+```
 - **Billing & Contract Churn:** Investigated churn rates by contract type, payment method, and average monthly charges for churned vs. non-churned groups.
+  ```sql
+  -- 4. Billing & Contract Information
+
+-- What is the churn rate for each Contract type (Month-to-month, One year, Two year)?
+SELECT 
+    Contract,
+    COUNT(*) AS CustomerCount,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY Contract;
+
+-- How does the churn rate vary by PaymentMethod (e.g., Electronic Check, Mailed Check, etc.)?
+SELECT 
+    PaymentMethod,
+    COUNT(*) AS CustomerCount,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY PaymentMethod;
+
+-- What are the average MonthlyCharges for customers who have churned versus those who have not?
+SELECT 
+    Churn, AVG(MonthlyCharges) AS AvgMonthlyCharges
+FROM
+    churn_data
+GROUP BY Churn;
+
+-- What are the average TotalCharges for customers in each Contract type?
+SELECT 
+    Churn, AVG(TotalCharges) AS AvgTotalCharges
+FROM
+    churn_data
+GROUP BY Churn;
+
+-- How many customers use paperless billing, and what is their churn rate compared to those who don't?
+SELECT 
+    PaperlessBilling,
+    COUNT(*) AS CustomerCount,
+    SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) AS ChurnCount,
+    (SUM(CASE
+        WHEN Churn = 'Yes' THEN 1
+        ELSE 0
+    END) / COUNT(*)) * 100 AS ChurnRate
+FROM
+    churn_data
+GROUP BY PaperlessBilling;
+  ```
 
 ## Power BI Visualizations & Insights:
 The Power BI report effectively visualizes these insights across multiple pages:

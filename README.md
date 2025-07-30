@@ -59,7 +59,7 @@ SQL queries were executed to derive foundational metrics:
 
 - **Demographic Churn:** Analyzed churn rates across gender, senior citizen status, and partner status.
 
-  ```sql
+```sql
   
   -- 1. Overall Churn & Demographic Profile
 
@@ -127,7 +127,7 @@ SELECT
     END) / COUNT(*)) * 100 AS Partner_Churn
 FROM
     churn_data;
-
+```
 
 - **Tenure-Based Churn:** Determined average tenure for churned vs. non-churned customers and churn rates across different tenure_bins.
 ```sql
@@ -258,7 +258,7 @@ GROUP BY Partner;
 ```
 - **Billing & Contract Churn:** Investigated churn rates by contract type, payment method, and average monthly charges for churned vs. non-churned groups.
 
-  ```sql
+```sql
   -- 4. Billing & Contract Information
 
 -- What is the churn rate for each Contract type (Month-to-month, One year, Two year)?
@@ -322,7 +322,7 @@ SELECT
 FROM
     churn_data
 GROUP BY PaperlessBilling;
-
+```
 
 ## Power BI Visualizations & Insights:
 The Power BI report effectively visualizes these insights across multiple pages:

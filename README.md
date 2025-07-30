@@ -125,7 +125,7 @@ SELECT
         ELSE 0
     END) / COUNT(*)) * 100 AS Partner_Churn
 FROM
-    churn_data;```
+    churn_data;
 
 
 - **Tenure-Based Churn:** Determined average tenure for churned vs. non-churned customers and churn rates across different tenure_bins.
